@@ -12,5 +12,6 @@ namespace webAPiINZ.Model
         public int HealthInfo { get; set; }
         [JsonIgnore]
         public List<Product> Products { get; set; }
+
     }
 }

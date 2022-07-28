@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using webAPiINZ.Data;
 
@@ -10,9 +11,10 @@ using webAPiINZ.Data;
 namespace webAPiINZ.Migrations
 {
     [DbContext(typeof(InżContext))]
-    partial class InżContextModelSnapshot : ModelSnapshot
+    [Migration("20220717121125_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,9 +130,6 @@ namespace webAPiINZ.Migrations
 
                     b.Property<double>("ProteinPer")
                         .HasColumnType("double");
-
-                    b.Property<DateTime>("SaveTime")
-                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Target")
                         .IsRequired()
