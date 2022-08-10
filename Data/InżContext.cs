@@ -23,11 +23,7 @@ namespace webAPiINZ.Data
             modelBuilder.Entity<User>().ToTable("User");
             modelBuilder.Entity<Ingredient>().ToTable("Ingredients");
             modelBuilder.Entity<Personal>().ToTable("Personals");
-            modelBuilder.Entity<IngrProd>(
-                eb =>
-                {
-                    eb.HasNoKey();
-                });       
+            modelBuilder.Entity<IngrProd>().ToTable("IngrProd");   
 
         }
 

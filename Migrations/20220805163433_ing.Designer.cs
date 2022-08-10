@@ -11,8 +11,8 @@ using webAPiINZ.Data;
 namespace webAPiINZ.Migrations
 {
     [DbContext(typeof(InżContext))]
-    [Migration("20220718143751_personalAddDateTime")]
-    partial class personalAddDateTime
+    [Migration("20220805163433_ing")]
+    partial class ing
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,25 +21,11 @@ namespace webAPiINZ.Migrations
                 .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("IngredientProduct", b =>
-                {
-                    b.Property<string>("IngredientsIdIgredient")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("ProductsBarcode")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("IngredientsIdIgredient", "ProductsBarcode");
-
-                    b.HasIndex("ProductsBarcode");
-
-                    b.ToTable("IngredientProduct");
-                });
-
             modelBuilder.Entity("webAPiINZ.Model.Ingredient", b =>
                 {
-                    b.Property<string>("IdIgredient")
-                        .HasColumnType("varchar(255)");
+                    b.Property<int>("IdIgredient")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
                     b.Property<int>("HealthInfo")
                         .HasColumnType("int");
@@ -52,7 +38,12 @@ namespace webAPiINZ.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("ProductBarcode")
+                        .HasColumnType("varchar(255)");
+
                     b.HasKey("IdIgredient");
+
+                    b.HasIndex("ProductBarcode");
 
                     b.ToTable("Ingredients", (string)null);
                 });
@@ -216,19 +207,16 @@ namespace webAPiINZ.Migrations
                     b.ToTable("User", (string)null);
                 });
 
-            modelBuilder.Entity("IngredientProduct", b =>
+            modelBuilder.Entity("webAPiINZ.Model.Ingredient", b =>
                 {
-                    b.HasOne("webAPiINZ.Model.Ingredient", null)
-                        .WithMany()
-                        .HasForeignKey("IngredientsIdIgredient")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("webAPiINZ.Model.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsBarcode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Ingredients")
+                        .HasForeignKey("ProductBarcode");
+                });
+
+            modelBuilder.Entity("webAPiINZ.Model.Product", b =>
+                {
+                    b.Navigation("Ingredients");
                 });
 #pragma warning restore 612, 618
         }

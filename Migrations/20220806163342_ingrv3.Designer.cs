@@ -11,8 +11,8 @@ using webAPiINZ.Data;
 namespace webAPiINZ.Migrations
 {
     [DbContext(typeof(InżContext))]
-    [Migration("20220717121125_init")]
-    partial class init
+    [Migration("20220806163342_ingrv3")]
+    partial class ingrv3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,25 +21,11 @@ namespace webAPiINZ.Migrations
                 .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("IngredientProduct", b =>
-                {
-                    b.Property<string>("IngredientsIdIgredient")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("ProductsBarcode")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("IngredientsIdIgredient", "ProductsBarcode");
-
-                    b.HasIndex("ProductsBarcode");
-
-                    b.ToTable("IngredientProduct");
-                });
-
             modelBuilder.Entity("webAPiINZ.Model.Ingredient", b =>
                 {
-                    b.Property<string>("IdIgredient")
-                        .HasColumnType("varchar(255)");
+                    b.Property<int>("IdIgredient")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
                     b.Property<int>("HealthInfo")
                         .HasColumnType("int");
@@ -52,13 +38,22 @@ namespace webAPiINZ.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("ProductBarcode")
+                        .HasColumnType("varchar(255)");
+
                     b.HasKey("IdIgredient");
+
+                    b.HasIndex("ProductBarcode");
 
                     b.ToTable("Ingredients", (string)null);
                 });
 
             modelBuilder.Entity("webAPiINZ.Model.IngrProd", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
                     b.Property<int>("ingredietnId")
                         .HasColumnType("int");
 
@@ -66,7 +61,9 @@ namespace webAPiINZ.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.ToTable("IngrProds");
+                    b.HasKey("Id");
+
+                    b.ToTable("IngrProd", (string)null);
                 });
 
             modelBuilder.Entity("webAPiINZ.Model.Personal", b =>
@@ -130,6 +127,9 @@ namespace webAPiINZ.Migrations
 
                     b.Property<double>("ProteinPer")
                         .HasColumnType("double");
+
+                    b.Property<DateTime>("SaveTime")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Target")
                         .IsRequired()
@@ -213,19 +213,16 @@ namespace webAPiINZ.Migrations
                     b.ToTable("User", (string)null);
                 });
 
-            modelBuilder.Entity("IngredientProduct", b =>
+            modelBuilder.Entity("webAPiINZ.Model.Ingredient", b =>
                 {
-                    b.HasOne("webAPiINZ.Model.Ingredient", null)
-                        .WithMany()
-                        .HasForeignKey("IngredientsIdIgredient")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("webAPiINZ.Model.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsBarcode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Ingredients")
+                        .HasForeignKey("ProductBarcode");
+                });
+
+            modelBuilder.Entity("webAPiINZ.Model.Product", b =>
+                {
+                    b.Navigation("Ingredients");
                 });
 #pragma warning restore 612, 618
         }

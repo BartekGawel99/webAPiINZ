@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace webAPiINZ.Migrations
 {
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,8 +17,8 @@ namespace webAPiINZ.Migrations
                 name: "Ingredients",
                 columns: table => new
                 {
-                    IdIgredient = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IdIgredient = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Info = table.Column<string>(type: "longtext", nullable: false)
@@ -77,7 +77,8 @@ namespace webAPiINZ.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ProteinPer = table.Column<double>(type: "double", nullable: false),
                     CarbonatesPer = table.Column<double>(type: "double", nullable: false),
-                    FatPer = table.Column<double>(type: "double", nullable: false)
+                    FatPer = table.Column<double>(type: "double", nullable: false),
+                    SaveTime = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -140,8 +141,7 @@ namespace webAPiINZ.Migrations
                 name: "IngredientProduct",
                 columns: table => new
                 {
-                    IngredientsIdIgredient = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IngredientsIdIgredient = table.Column<int>(type: "int", nullable: false),
                     ProductsBarcode = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using webAPiINZ.Data;
 
@@ -10,14 +11,30 @@ using webAPiINZ.Data;
 namespace webAPiINZ.Migrations
 {
     [DbContext(typeof(InżContext))]
-    partial class InżContextModelSnapshot : ModelSnapshot
+    [Migration("20220728190333_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("IngredientProduct", b =>
+                {
+                    b.Property<int>("IngredientsIdIgredient")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductsBarcode")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("IngredientsIdIgredient", "ProductsBarcode");
+
+                    b.HasIndex("ProductsBarcode");
+
+                    b.ToTable("IngredientProduct");
+                });
 
             modelBuilder.Entity("webAPiINZ.Model.Ingredient", b =>
                 {
@@ -36,22 +53,13 @@ namespace webAPiINZ.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ProductBarcode")
-                        .HasColumnType("varchar(255)");
-
                     b.HasKey("IdIgredient");
-
-                    b.HasIndex("ProductBarcode");
 
                     b.ToTable("Ingredients", (string)null);
                 });
 
             modelBuilder.Entity("webAPiINZ.Model.IngrProd", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
                     b.Property<int>("ingredietnId")
                         .HasColumnType("int");
 
@@ -59,9 +67,7 @@ namespace webAPiINZ.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("IngrProd", (string)null);
+                    b.ToTable("IngrProds");
                 });
 
             modelBuilder.Entity("webAPiINZ.Model.Personal", b =>
@@ -211,16 +217,19 @@ namespace webAPiINZ.Migrations
                     b.ToTable("User", (string)null);
                 });
 
-            modelBuilder.Entity("webAPiINZ.Model.Ingredient", b =>
+            modelBuilder.Entity("IngredientProduct", b =>
                 {
-                    b.HasOne("webAPiINZ.Model.Product", null)
-                        .WithMany("Ingredients")
-                        .HasForeignKey("ProductBarcode");
-                });
+                    b.HasOne("webAPiINZ.Model.Ingredient", null)
+                        .WithMany()
+                        .HasForeignKey("IngredientsIdIgredient")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("webAPiINZ.Model.Product", b =>
-                {
-                    b.Navigation("Ingredients");
+                    b.HasOne("webAPiINZ.Model.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsBarcode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

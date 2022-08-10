@@ -16,52 +16,76 @@ namespace webAPiINZ.Controllers
         {
             _context = context;
         }
+
         [HttpGet("{barcode}")]
         public async Task<ActionResult<Product>> Get(string barcode)
         {
-            var prod = await _context.Products.Where(c => c.Barcode == barcode)
-                .Include(c => c.Ingredients).FirstOrDefaultAsync();
-            if(prod == null)
+            var prod = await _context.Products.Where(c => c.Barcode == barcode).FirstOrDefaultAsync();
+            if (prod == null)
                 return NotFound();
+
+            var list = await _context.IngrProds.Where(id => id.prodId == barcode).ToListAsync();
+            var listIng = await _context.Ingredients.ToListAsync();
+            var result = listIng.Where(p => !list.All(p2 => p2.ingredietnId == p.IdIgredient)).ToList();
+
+            if(result.Count != 0)
+            {
+               prod.Ingredients = result;
+            }           
+
             return prod;
         }
 
+        [HttpGet]
+        [Route("/ListIngrediets")]
+        public async Task<ActionResult<List<Ingredient>>> GetIngredients()
+        {
+            var ingList =  await _context.Ingredients.ToListAsync();
+            return ingList;
+        }
+
+        [HttpPost]
+        [Route("/AddIngrediet")]
+        public async Task<ActionResult> AddIngredint([FromBody] Ingredient ingredient)
+        {
+            if (ingredient == null)
+                return BadRequest();
+
+            _context.Ingredients.Add(ingredient);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }       
+
         
         [HttpPost]
-        public async Task<ActionResult<List<Product>>> AddProduct(Product product)
+        [Route("/AddProduct")]
+        public async Task<ActionResult<bool>> AddProduct([FromBody] Product product)
         {
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
-            return Ok(await _context.Products.ToListAsync());
+            List<Ingredient> listIng = new List<Ingredient>();
+
+            listIng = product.Ingredients;
+            List<IngrProd> ingrProd = new List<IngrProd>();
+            try
+            {                
+                IngrProd ingrProds = new IngrProd();
+                
+                    foreach (var ingredient in listIng)
+                    {
+                        ingrProd.Add(new IngrProd { prodId = product.Barcode, ingredietnId = ingredient.IdIgredient});
+
+                    }
+
+                product.Ingredients.Clear();
+                _context.IngrProds.AddRange(ingrProd);
+                _context.Products.Add(product);
+                _context.SaveChanges();
+                return Ok();
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
-        //[HttpPost]
-        //public async Task<ActionResult<List<Product>>> AddPIngredient(Ingredient ingredient)
-        //{
-        //    _context.Ingredients.Add(ingredient);
-        //    await _context.SaveChangesAsync();
-        //    return Ok(await _context.Ingredients.ToListAsync());
-        //}
-        //[HttpGet]
-        //[Route("Ingredient")]
-        //public async Task<ActionResult<Product>> AddIngrediet(IngrProd request)
-        //{
-        //    var prod = await _context.Products
-        //        .Where(c => c.Barcode == request.prodId)
-        //        .Include(c => c.Ingredients)
-        //        .FirstOrDefaultAsync();
-
-        //    if(prod == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var ingrediet = await _context.Ingredients.FindAsync(request.ingredietnId);
-        //    if (ingrediet == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return prod;
-        //}
+        
     }
 }
