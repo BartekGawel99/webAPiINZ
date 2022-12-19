@@ -26,7 +26,7 @@ namespace webAPiINZ.Controllers
 
             var list = await _context.IngrProds.Where(id => id.prodId == barcode).ToListAsync();
             var listIng = await _context.Ingredients.ToListAsync();
-            var result = listIng.Where(p => !list.All(p2 => p2.ingredietnId == p.IdIgredient)).ToList();
+            var result = listIng.Where(p => list.All(p2 => p2.ingredietnId == p.IdIgredient)).ToList();
 
             if(result.Count != 0)
             {
